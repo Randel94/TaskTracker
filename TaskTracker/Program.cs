@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TaskTracker.Data;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using TaskTracker.Middlewares.Swagger;
+using TaskTracker.Services.TaskServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +18,8 @@ builder.Services.AddSwaggerGen(options =>
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+
+builder.Services.AddTransient<ITaskService, TaskService>();
 
 var app = builder.Build();
 

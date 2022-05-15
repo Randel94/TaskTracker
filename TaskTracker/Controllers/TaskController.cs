@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TaskTracker.Data;
 using TaskTracker.Models;
+using TaskTracker.Services.TaskServices;
 
 namespace TaskTracker.Controllers
 {
@@ -14,10 +15,11 @@ namespace TaskTracker.Controllers
     [ApiController]
     public class TaskController : Controller
     {
-        private readonly AppDbContext _context;
-        public TaskController(AppDbContext context)
+        private readonly ITaskService _taskService;
+
+        public TaskController(ITaskService taskService)
         {
-            _context = context;
+            _taskService = taskService;
         }
 
         /// <summary>
@@ -27,9 +29,9 @@ namespace TaskTracker.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var tasks = _context.Task.ToListAsync();
+            var response = await _taskService.GetTaskList();
 
-            return Ok(tasks);
+            return Ok(response);
         }
 
         

@@ -14,8 +14,21 @@ namespace TaskTracker.Services.TaskServices
 
         public async Task<List<TaskModel>> GetTaskList()
         {
-            var response = new List<TaskModel>();
-
+            var response = new List<TaskModel>()
+            {
+                new TaskModel()
+                {
+                    TaskId = 1,
+                    Name = "Task",
+                    Description = "Description",
+                    Executor = "Executor",
+                    DateReg = DateTime.Now,
+                    Status = Models.TaskStatus.Assigned,
+                    EstimatedTime = 2,
+                    CompletedTime = null,
+                    DateFinish = null
+                }
+            };
             return response;
         }
 
