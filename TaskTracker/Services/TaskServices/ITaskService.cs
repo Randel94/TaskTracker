@@ -32,5 +32,10 @@ namespace TaskTracker.Services.TaskServices
         /// <param name="taskId"></param>
         /// <returns></returns>
         Task Delete(int taskId);
+        /// <summary>
+        /// Получение списка статусов задач.
+        /// </summary>
+        /// <returns></returns>
+        Task GetTaskStatusList();
     }
 }

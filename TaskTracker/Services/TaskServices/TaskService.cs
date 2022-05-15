@@ -52,5 +52,9 @@ namespace TaskTracker.Services.TaskServices
         public async Task Delete(int taskId)
         {
         }
+
+        public async Task GetTaskStatusList()
+        {
+        }
     }
 }
