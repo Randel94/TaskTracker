@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TaskTracker.Models
 {
@@ -38,11 +39,13 @@ namespace TaskTracker.Models
         /// <summary>
         /// Плановая трудоемкость задачи
         /// </summary>
+        [Column(TypeName = "decimal(6,2)")]
         public decimal EstimatedTime { get; set; }
         /// <summary>
         /// Фактическое время выполнения
         /// </summary>
-        public decimal CompletedTime { get; set; }
+        [Column(TypeName = "decimal(6,2)")]
+        public decimal? CompletedTime { get; set; }
         /// <summary>
         /// Дата завершения задачи
         /// </summary>

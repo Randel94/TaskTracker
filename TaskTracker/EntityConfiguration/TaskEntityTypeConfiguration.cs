@@ -22,6 +22,9 @@ namespace TaskTracker.EntityConfiguration
                 .IsRequired()
                 .IsUnicode(false);
 
+            builder.Property(x => x.CompletedTime)
+                .IsRequired(false);
+
             builder.HasOne(x => x.ParentTask)
                 .WithMany()
                 .HasForeignKey(x => x.ParentId);
