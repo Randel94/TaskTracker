@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace TaskTracker.Models
 {
     /// <summary>
     /// Модель задачи
     /// </summary>
-    public class Task
+    public class TaskModel
     {
         /// <summary>
         /// Идентификатор задачи
@@ -14,14 +15,17 @@ namespace TaskTracker.Models
         /// <summary>
         /// Наименование задачи
         /// </summary>
+        [Required(ErrorMessage = "Введите название задачи")]
         public string Name { get; set; }
         /// <summary>
         /// Описание задачи
         /// </summary>
+        [Required(ErrorMessage = "Введите описание задачи")]
         public string Description { get; set; }
         /// <summary>
         /// Список исполнителей
         /// </summary>
+        [Required(ErrorMessage = "Назначьте как минимум одного исполнителя")]
         public string Executor { get; set; }
         /// <summary>
         /// Дата регистрации задачи
@@ -43,11 +47,26 @@ namespace TaskTracker.Models
         /// Дата завершения задачи
         /// </summary>
         public DateTime? DateFinish { get; set; } = null;
+
+        private int? _parentId;
+
         /// <summary>
         /// Идентификатор родительской задачи
         /// </summary>
-        public int? ParentId { get; set; }
-        public Task ParentTask { get; set; }
+        public int? ParentId
+        {
+            get { return _parentId; }
+            set 
+            {
+                if (value == TaskId)
+                {
+                    throw new Exception("Нельзя установить задачу подзадачей самой себе");
+                }
+                _parentId = value;
+            }
+        }
+
+        public TaskModel? ParentTask { get; set; }
     }
 
     public enum TaskStatus

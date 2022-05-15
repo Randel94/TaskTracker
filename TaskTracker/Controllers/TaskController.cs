@@ -56,7 +56,7 @@ namespace TaskTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TaskId,Name,Description,Executor,DateReg,Status,EstimatedTime,CompletedTime,DateFinish,ParentId")] Models.Task task)
+        public async Task<IActionResult> Create([Bind("TaskId,Name,Description,Executor,DateReg,Status,EstimatedTime,CompletedTime,DateFinish,ParentId")] Models.TaskModel task)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace TaskTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TaskId,Name,Description,Executor,DateReg,Status,EstimatedTime,CompletedTime,DateFinish,ParentId")] Models.Task task)
+        public async Task<IActionResult> Edit(int id, [Bind("TaskId,Name,Description,Executor,DateReg,Status,EstimatedTime,CompletedTime,DateFinish,ParentId")] Models.TaskModel task)
         {
             if (id != task.TaskId)
             {
