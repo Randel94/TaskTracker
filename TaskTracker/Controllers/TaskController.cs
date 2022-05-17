@@ -85,5 +85,15 @@ namespace TaskTracker.Controllers
 
             return Ok();
         }
+
+        /// <summary>
+        /// Получение списка статусов задач.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("statuses")]
+        public async Task<IActionResult> GetStatuses()
+        {
+            return Ok();
+        }
     }
 }

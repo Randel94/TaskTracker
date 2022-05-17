@@ -4,6 +4,7 @@ using TaskTracker.Data;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using TaskTracker.Services.TaskServices;
+using TaskTracker.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,8 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.UseEndpoints(endpoints =>
 {
