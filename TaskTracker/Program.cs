@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using TaskTracker.Services.TaskServices;
 using TaskTracker.Middleware;
+using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
 

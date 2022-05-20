@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TaskTracker.Models.Exceptions;
 
 namespace TaskTracker.Models
 {
@@ -16,17 +17,17 @@ namespace TaskTracker.Models
         /// <summary>
         /// Наименование задачи
         /// </summary>
-        [Required(ErrorMessage = "Введите название задачи")]
+        [Required(ErrorMessage = "Введите название задачи.")]
         public string Name { get; set; }
         /// <summary>
         /// Описание задачи
         /// </summary>
-        [Required(ErrorMessage = "Введите описание задачи")]
+        [Required(ErrorMessage = "Введите описание задачи.")]
         public string Description { get; set; }
         /// <summary>
         /// Список исполнителей
         /// </summary>
-        [Required(ErrorMessage = "Назначьте как минимум одного исполнителя")]
+        [Required(ErrorMessage = "Назначьте как минимум одного исполнителя.")]
         public string Executor { get; set; }
         /// <summary>
         /// Дата регистрации задачи
@@ -40,6 +41,7 @@ namespace TaskTracker.Models
         /// Плановая трудоемкость задачи
         /// </summary>
         [Column(TypeName = "decimal(6,2)")]
+        [Required(ErrorMessage = "Введите плановое время выполнения задачи.")]
         public decimal EstimatedTime { get; set; }
         /// <summary>
         /// Фактическое время выполнения
@@ -63,7 +65,7 @@ namespace TaskTracker.Models
             {
                 if (value == TaskId)
                 {
-                    throw new Exception("Нельзя установить задачу подзадачей самой себе");
+                    throw new ServerException("Нельзя установить задачу подзадачей самой себе");
                 }
                 _parentId = value;
             }
