@@ -14,9 +14,6 @@ namespace TaskTracker.Data
         {
         }
 
-        /// <summary>
-        /// asdasd
-        /// </summary>
         public DbSet<TaskModel> Task { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

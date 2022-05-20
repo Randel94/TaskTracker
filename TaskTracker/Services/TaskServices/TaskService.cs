@@ -8,12 +8,10 @@ namespace TaskTracker.Services.TaskServices
     public class TaskService : ITaskService
     {
         private readonly AppDbContext _dbContext;
-        private readonly ILogger<TaskService> _logger;
 
-        public TaskService(AppDbContext dbContext, ILogger<TaskService> logger)
+        public TaskService(AppDbContext dbContext)
         {
             _dbContext = dbContext;
-            _logger = logger;
         }
 
         public async Task<List<TaskModel>> GetTaskList()

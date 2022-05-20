@@ -22,7 +22,7 @@ namespace TaskTracker.Middleware
             }
             catch (ServerException ex)
             {
-                //_logger.LogError(ex, ex.Message);
+                _logger.LogError(ex, ex.Message);
                 var response = context.Response;
                 response.ContentType = "text/plain";
                 response.StatusCode = (int)HttpStatusCode.InternalServerError;
@@ -30,7 +30,7 @@ namespace TaskTracker.Middleware
             }
             catch (ObjectNotFoundException ex)
             {
-                //_logger.LogError(ex, ex.Message);
+                _logger.LogError(ex, ex.Message);
                 var response = context.Response;
                 response.ContentType = "text/plain";
                 response.StatusCode = (int)HttpStatusCode.NotFound;
