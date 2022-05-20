@@ -36,7 +36,7 @@ namespace TaskTracker.Models
         /// <summary>
         /// Статус задачи
         /// </summary>
-        public TaskStatus Status { get; set; }
+        public TaskStatusEnum Status { get; set; }
         /// <summary>
         /// Плановая трудоемкость задачи
         /// </summary>
@@ -74,14 +74,29 @@ namespace TaskTracker.Models
         public TaskModel? ParentTask { get; set; }
     }
 
-    public enum TaskStatus
+    /// <summary>
+    /// Список статусов задач
+    /// </summary>
+    public enum TaskStatusEnum
     {
+        /// <summary>
+        /// Назначена
+        /// </summary>
         [Description("Назначена")]
         Assigned,
+        /// <summary>
+        /// Выполняется
+        /// </summary>
         [Description("Выполняется")]
         Active,
+        /// <summary>
+        /// Приостановлена
+        /// </summary>
         [Description("Приостановлена")]
         Suspended,
+        /// <summary>
+        /// Завершена
+        /// </summary>
         [Description("Завершена")]
         Finished
     }

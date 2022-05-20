@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskTracker.Data;
+using TaskTracker.Helpers;
 using TaskTracker.Models;
 using TaskTracker.Models.Exceptions;
 
@@ -25,7 +26,7 @@ namespace TaskTracker.Services.TaskServices
             }
             catch (Exception ex)
             {
-                throw new ServerException(ex.Message);
+                throw new ServerException("Get Task List exception: " + ex.Message);
             }
         }
 
@@ -45,7 +46,7 @@ namespace TaskTracker.Services.TaskServices
             }
             catch (Exception ex)
             {
-                throw new ServerException(ex.Message);
+                throw new ServerException("Get Task exception : " + ex.Message);
             }
 
             return response;
@@ -61,7 +62,7 @@ namespace TaskTracker.Services.TaskServices
             }
             catch (Exception ex)
             {
-                throw new ServerException(ex.Message);
+                throw new ServerException("Create Task exception: " + ex.Message);
             }
 
             return task;
@@ -94,16 +95,40 @@ namespace TaskTracker.Services.TaskServices
             }
             catch (Exception ex)
             {
-                throw new ServerException(ex.Message);
+                throw new ServerException("Update Task exception: " + ex.Message);
             }
         }
 
         public async Task Delete(int taskId)
         {
+            try
+            {
+                var task = await _dbContext.Task
+                    .FirstOrDefaultAsync(x => x.TaskId == taskId);
+
+                _dbContext.Task.Remove(task);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ServerException("Delete Task exception: " + ex.Message);
+            }
         }
 
-        public async Task GetTaskStatusList()
+        public async Task<Dictionary<int, string>> GetTaskStatusList()
         {
+            try
+            {
+                var statuses = Enum.GetValues(typeof(TaskStatusEnum))
+                    .Cast<TaskStatusEnum>()
+                    .ToDictionary(k => (int)k, v => v.GetDescription());
+
+                return statuses;
+            }
+            catch (Exception ex)
+            {
+                throw new ServerException("Get Task Status List exception: " + ex.Message);
+            }
         }
     }
 }

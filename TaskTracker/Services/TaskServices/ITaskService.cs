@@ -36,6 +36,6 @@ namespace TaskTracker.Services.TaskServices
         /// Получение списка статусов задач.
         /// </summary>
         /// <returns></returns>
-        Task GetTaskStatusList();
+        Task<Dictionary<int, string>> GetTaskStatusList();
     }
 }

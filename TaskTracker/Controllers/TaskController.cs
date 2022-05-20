@@ -93,7 +93,9 @@ namespace TaskTracker.Controllers
         [HttpGet("statuses")]
         public async Task<IActionResult> GetStatuses()
         {
-            return Ok();
+            var response = await _taskService.GetTaskStatusList();
+
+            return Ok(response);
         }
     }
 }
