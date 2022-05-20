@@ -1,4 +1,5 @@
-﻿using TaskTracker.Models;
+﻿using TaskTracker.Models.Entities;
+using TaskTracker.Models.DTOs;
 
 namespace TaskTracker.Services.TaskServices
 {
@@ -8,24 +9,24 @@ namespace TaskTracker.Services.TaskServices
         /// Получение списка задач.
         /// </summary>
         /// <returns></returns>
-        Task<List<TaskModel>> GetTaskList();
+        Task<List<TaskEntity>> GetTaskList();
         /// <summary>
         /// Получение описания задачи по идентификатору.
         /// </summary>
         /// <param name="taskId"></param>
         /// <returns></returns>
-        Task<TaskModel> GetTask(int taskId);
+        Task<TaskDTO> GetTask(int taskId);
         /// <summary>
         /// Создание задачи.
         /// </summary>
         /// <returns></returns>
-        Task<TaskModel> CreateTask(TaskModel task);
+        Task<TaskEntity> CreateTask(TaskEntity task);
         /// <summary>
         /// Редактирование задачи.
         /// </summary>
         /// <param name="task"></param>
         /// <returns></returns>
-        Task<TaskModel> UpdateTask(TaskModel task);
+        Task<TaskEntity> UpdateTask(TaskEntity task);
         /// <summary>
         /// Удаление задачи.
         /// </summary>

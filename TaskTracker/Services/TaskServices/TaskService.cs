@@ -1,21 +1,26 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TaskTracker.Data;
 using TaskTracker.Helpers;
-using TaskTracker.Models;
+using TaskTracker.Models.Entities;
+using TaskTracker.Models.Enums;
 using TaskTracker.Models.Exceptions;
+using TaskTracker.Models.DTOs;
 
 namespace TaskTracker.Services.TaskServices
 {
     public class TaskService : ITaskService
     {
         private readonly AppDbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public TaskService(AppDbContext dbContext)
+        public TaskService(AppDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
-        public async Task<List<TaskModel>> GetTaskList()
+        public async Task<List<TaskEntity>> GetTaskList()
         {
             try
             {
@@ -30,29 +35,29 @@ namespace TaskTracker.Services.TaskServices
             }
         }
 
-        public async Task<TaskModel> GetTask(int taskId)
+        public async Task<TaskDTO> GetTask(int taskId)
         {
-            var response = new TaskModel();
-
             try
             {
-                response = await _dbContext.Task
+                var task = await _dbContext.Task
+                    .Include(x => x.ParentTask)
+                    .Include(x => x.ChildTasks)
                     .FirstOrDefaultAsync(x => x.TaskId == taskId);
 
-                if (response == null)
+                if (task == null)
                 {
                     throw new ObjectNotFoundException("Задача с таким идентификатором не найдена.");
                 }
+
+                return _mapper.Map<TaskDTO>(task);
             }
             catch (Exception ex)
             {
                 throw new ServerException("Get Task exception : " + ex.Message);
             }
-
-            return response;
         }
 
-        public async Task<TaskModel> CreateTask(TaskModel task)
+        public async Task<TaskEntity> CreateTask(TaskEntity task)
         {
             try
             {
@@ -68,7 +73,7 @@ namespace TaskTracker.Services.TaskServices
             return task;
         }
 
-        public async Task<TaskModel> UpdateTask(TaskModel task)
+        public async Task<TaskEntity> UpdateTask(TaskEntity task)
         {
             try
             {
@@ -90,7 +95,7 @@ namespace TaskTracker.Services.TaskServices
                 oldTask.ParentId = task.ParentId ?? oldTask.ParentId;
 
                 await _dbContext.SaveChangesAsync();
-             
+
                 return oldTask;
             }
             catch (Exception ex)

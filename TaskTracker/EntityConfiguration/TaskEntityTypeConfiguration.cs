@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TaskTracker.Models;
+using TaskTracker.Models.Entities;
 
 namespace TaskTracker.EntityConfiguration
 {
-    public class TaskEntityTypeConfiguration : IEntityTypeConfiguration<TaskModel>
+    public class TaskEntityTypeConfiguration : IEntityTypeConfiguration<TaskEntity>
     {
-        public void Configure(EntityTypeBuilder<TaskModel> builder)
+        public void Configure(EntityTypeBuilder<TaskEntity> builder)
         {
             builder.HasKey(x => x.TaskId);
 
@@ -26,7 +26,7 @@ namespace TaskTracker.EntityConfiguration
                 .IsRequired(false);
 
             builder.HasOne(x => x.ParentTask)
-                .WithMany()
+                .WithMany(x => x.ChildTasks)
                 .HasForeignKey(x => x.ParentId);
         }
     }

@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TaskTracker.Models.Enums;
 using TaskTracker.Models.Exceptions;
 
-namespace TaskTracker.Models
+namespace TaskTracker.Models.Entities
 {
     /// <summary>
     /// Модель задачи
     /// </summary>
-    public class TaskModel
+    public class TaskEntity
     {
         /// <summary>
         /// Идентификатор задачи
@@ -61,43 +62,17 @@ namespace TaskTracker.Models
         public int? ParentId
         {
             get { return _parentId; }
-            set 
+            set
             {
                 if (value == TaskId)
                 {
-                    throw new ServerException("Нельзя установить задачу подзадачей самой себе");
+                    throw new ForbiddenException("Нельзя установить задачу подзадачей самой себе");
                 }
                 _parentId = value;
             }
         }
 
-        public TaskModel? ParentTask { get; set; }
-    }
-
-    /// <summary>
-    /// Список статусов задач
-    /// </summary>
-    public enum TaskStatusEnum
-    {
-        /// <summary>
-        /// Назначена
-        /// </summary>
-        [Description("Назначена")]
-        Assigned,
-        /// <summary>
-        /// Выполняется
-        /// </summary>
-        [Description("Выполняется")]
-        Active,
-        /// <summary>
-        /// Приостановлена
-        /// </summary>
-        [Description("Приостановлена")]
-        Suspended,
-        /// <summary>
-        /// Завершена
-        /// </summary>
-        [Description("Завершена")]
-        Finished
+        public TaskEntity? ParentTask { get; set; }
+        public ICollection<TaskEntity>? ChildTasks { get; set; }
     }
 }

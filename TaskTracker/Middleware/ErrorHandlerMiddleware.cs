@@ -26,7 +26,7 @@ namespace TaskTracker.Middleware
                 var response = context.Response;
                 response.ContentType = "text/plain";
                 response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                await response.WriteAsync(ex.Message);
+                await response.WriteAsync("Ошибка сервера, посмотрите лог-файл.");
             }
             catch (ObjectNotFoundException ex)
             {
@@ -34,6 +34,14 @@ namespace TaskTracker.Middleware
                 var response = context.Response;
                 response.ContentType = "text/plain";
                 response.StatusCode = (int)HttpStatusCode.NotFound;
+                await response.WriteAsync(ex.Message);
+            }
+            catch (ForbiddenException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                var response = context.Response;
+                response.ContentType = "text/plain";
+                response.StatusCode = (int)HttpStatusCode.Forbidden;
                 await response.WriteAsync(ex.Message);
             }
         }

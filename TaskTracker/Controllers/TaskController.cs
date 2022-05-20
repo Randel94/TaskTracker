@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TaskTracker.Data;
-using TaskTracker.Models;
+using TaskTracker.Models.Entities;
+using TaskTracker.Models.DTOs;
 using TaskTracker.Services.TaskServices;
 
 namespace TaskTracker.Controllers
@@ -53,7 +54,7 @@ namespace TaskTracker.Controllers
         /// <param name="task"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CreateTask([FromBody] TaskModel task)
+        public async Task<IActionResult> CreateTask([FromBody] TaskEntity task)
         {
             var response = await _taskService.CreateTask(task);
 
@@ -66,7 +67,7 @@ namespace TaskTracker.Controllers
         /// <param name="task"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<IActionResult> UpdateTask([FromBody] TaskModel task)
+        public async Task<IActionResult> UpdateTask([FromBody] TaskEntity task)
         {
             var response = await _taskService.UpdateTask(task);
 
