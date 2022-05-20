@@ -6,44 +6,66 @@ using System.Reflection;
 using TaskTracker.Services.TaskServices;
 using TaskTracker.Middleware;
 using NLog;
+using NLog.Web;
 
-var builder = WebApplication.CreateBuilder(args);
+var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+logger.Debug("init main");
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddControllers();
-builder.Services.AddSwaggerGen(options =>
+try
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Task Tracker", Version = "v1" });
+    var builder = WebApplication.CreateBuilder(args);
 
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-});
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddTransient<ITaskService, TaskService>();
+    builder.Services.AddControllers();
 
-var app = builder.Build();
+    builder.Logging.ClearProviders();
+    builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+    builder.Host.UseNLog();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
+    builder.Services.AddSwaggerGen(options =>
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Task Tracker v1");
-        options.RoutePrefix = string.Empty;
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "Task Tracker", Version = "v1" });
+
+        var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
     });
+
+    builder.Services.AddTransient<ITaskService, TaskService>();
+
+    var app = builder.Build();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Task Tracker v1");
+            options.RoutePrefix = string.Empty;
+        });
+    }
+
+    app.UseStaticFiles();
+
+    app.UseRouting();
+
+    app.UseMiddleware<RequestResponseLoggingMiddleware>();
+    app.UseMiddleware<ErrorHandlerMiddleware>();
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapDefaultControllerRoute();
+    });
+
+    app.Run();
 }
-
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseMiddleware<ErrorHandlerMiddleware>();
-
-app.UseEndpoints(endpoints =>
+catch (Exception ex)
 {
-    endpoints.MapDefaultControllerRoute();
-});
-
-app.Run();
+    logger.Error(ex.Message, "Stopped program because of exception");
+    throw;
+}
+finally
+{
+    LogManager.Shutdown();
+}
