@@ -3,6 +3,9 @@ using TaskTracker.Models.Enums;
 
 namespace TaskTracker.Models.Params
 {
+    /// <summary>
+    /// Параметр создания задачи
+    /// </summary>
     public class CreateTaskParam
     {
         /// <summary>
@@ -29,14 +32,6 @@ namespace TaskTracker.Models.Params
         /// </summary>
         [Required(ErrorMessage = "Введите плановое время выполнения задачи.")]
         public decimal EstimatedTime { get; set; }
-        /// <summary>
-        /// Фактическое время выполнения
-        /// </summary>
-        public decimal? CompletedTime { get; set; }
-        /// <summary>
-        /// Дата завершения задачи
-        /// </summary>
-        public DateTime? DateFinish { get; set; } = null;
         /// <summary>
         /// Идентификатор родительской задачи
         /// </summary>

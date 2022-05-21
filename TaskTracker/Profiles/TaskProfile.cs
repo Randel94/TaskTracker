@@ -13,7 +13,8 @@ namespace TaskTracker.Profiles
                 .ForMember(d => d.ParentTask, opt => opt.MapFrom(src => src.ParentTask))
                 .ForMember(d => d.ChildTasks, opt => opt.MapFrom(src => src.ChildTasks));
 
-            CreateMap<CreateTaskParam, TaskEntity>();
+            CreateMap<CreateTaskParam, TaskEntity>()
+                .ForMember(d => d.ParentId, opt => opt.MapFrom(src => src.PatentId));
         }
     }
 }

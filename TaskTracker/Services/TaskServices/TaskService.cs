@@ -7,6 +7,7 @@ using TaskTracker.Models.Enums;
 using TaskTracker.Models.Exceptions;
 using TaskTracker.Models.DTOs;
 using TaskTracker.Models.Params;
+using AutoMapper.QueryableExtensions;
 
 namespace TaskTracker.Services.TaskServices
 {
@@ -21,11 +22,13 @@ namespace TaskTracker.Services.TaskServices
             _mapper = mapper;
         }
 
-        public async Task<List<TaskEntity>> GetTaskList()
+        public async Task<List<TaskDTO>> GetTaskList()
         {
             try
             {
                 var taskList = await _dbContext.Task
+                    .Where(x => x.ParentId == null)
+                    .ProjectTo<TaskDTO>(_mapper.ConfigurationProvider)
                     .ToListAsync();
 
                 return taskList;
@@ -81,7 +84,7 @@ namespace TaskTracker.Services.TaskServices
             }
         }
 
-        public async Task<TaskEntity> UpdateTask(TaskEntity task)
+        public async Task<TaskDTO> UpdateTask(UpdateTaskParam task)
         {
             try
             {
@@ -93,18 +96,18 @@ namespace TaskTracker.Services.TaskServices
                     throw new ObjectNotFoundException("Задача не найдена.");
                 }
 
-                oldTask.Name = task.Name;
-                oldTask.Description = task.Description;
-                oldTask.Executor = task.Executor;
-                oldTask.Status = task.Status;
-                oldTask.EstimatedTime = task.EstimatedTime;
+                oldTask.Name = task.Name ?? oldTask.Name;
+                oldTask.Description = task.Description ?? oldTask.Description;
+                oldTask.Executor = task.Executor ?? oldTask.Executor;
+                oldTask.Status = task.Status ?? oldTask.Status;
+                oldTask.EstimatedTime = task.EstimatedTime ?? oldTask.EstimatedTime;
                 oldTask.CompletedTime = task.CompletedTime ?? oldTask.CompletedTime;
                 oldTask.DateFinish = task.DateFinish ?? oldTask.DateFinish;
                 oldTask.ParentId = task.ParentId ?? oldTask.ParentId;
 
                 await _dbContext.SaveChangesAsync();
 
-                return oldTask;
+                return _mapper.Map<TaskDTO>(oldTask);
             }
             catch (Exception ex)
             {
@@ -118,6 +121,11 @@ namespace TaskTracker.Services.TaskServices
             {
                 var task = await _dbContext.Task
                     .FirstOrDefaultAsync(x => x.TaskId == taskId);
+
+                if (task == null)
+                {
+                    throw new ObjectNotFoundException("Задача не найдена.");
+                }
 
                 _dbContext.Task.Remove(task);
                 await _dbContext.SaveChangesAsync();

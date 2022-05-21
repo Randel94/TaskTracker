@@ -25,7 +25,7 @@ namespace TaskTracker.Controllers
         }
 
         /// <summary>
-        /// Получение списка задач.
+        /// Получение списка задач верхнего уровня.
         /// </summary>
         /// <returns></returns>
         [HttpGet("list")]
@@ -68,7 +68,7 @@ namespace TaskTracker.Controllers
         /// <param name="task"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<IActionResult> UpdateTask([FromBody] TaskEntity task)
+        public async Task<IActionResult> UpdateTask([FromBody] UpdateTaskParam task)
         {
             var response = await _taskService.UpdateTask(task);
 

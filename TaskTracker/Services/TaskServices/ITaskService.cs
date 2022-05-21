@@ -10,7 +10,7 @@ namespace TaskTracker.Services.TaskServices
         /// Получение списка задач.
         /// </summary>
         /// <returns></returns>
-        Task<List<TaskEntity>> GetTaskList();
+        Task<List<TaskDTO>> GetTaskList();
         /// <summary>
         /// Получение описания задачи по идентификатору.
         /// </summary>
@@ -27,7 +27,7 @@ namespace TaskTracker.Services.TaskServices
         /// </summary>
         /// <param name="task"></param>
         /// <returns></returns>
-        Task<TaskEntity> UpdateTask(TaskEntity task);
+        Task<TaskDTO> UpdateTask(UpdateTaskParam task);
         /// <summary>
         /// Удаление задачи.
         /// </summary>
