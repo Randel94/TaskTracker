@@ -6,6 +6,7 @@ using TaskTracker.Models.Entities;
 using TaskTracker.Models.Enums;
 using TaskTracker.Models.Exceptions;
 using TaskTracker.Models.DTOs;
+using TaskTracker.Models.Params;
 
 namespace TaskTracker.Services.TaskServices
 {
@@ -57,20 +58,27 @@ namespace TaskTracker.Services.TaskServices
             }
         }
 
-        public async Task<TaskEntity> CreateTask(TaskEntity task)
+        public async Task<TaskDTO> CreateTask(CreateTaskParam param)
         {
             try
             {
+                var task = _mapper.Map<TaskEntity>(param);
+
                 await _dbContext.AddAsync(task);
 
                 await _dbContext.SaveChangesAsync();
+
+                if (task.ParentId != null)
+                {
+                    task.ParentTask = await _dbContext.Task.FindAsync(task.ParentId);
+                }
+
+                return _mapper.Map<TaskDTO>(task);
             }
             catch (Exception ex)
             {
                 throw new ServerException("Create Task exception: " + ex.Message);
             }
-
-            return task;
         }
 
         public async Task<TaskEntity> UpdateTask(TaskEntity task)

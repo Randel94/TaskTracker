@@ -9,6 +9,7 @@ using TaskTracker.Data;
 using TaskTracker.Models.Entities;
 using TaskTracker.Models.DTOs;
 using TaskTracker.Services.TaskServices;
+using TaskTracker.Models.Params;
 
 namespace TaskTracker.Controllers
 {
@@ -51,12 +52,12 @@ namespace TaskTracker.Controllers
         /// <summary>
         /// Создание задачи.
         /// </summary>
-        /// <param name="task"></param>
+        /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CreateTask([FromBody] TaskEntity task)
+        public async Task<IActionResult> CreateTask([FromBody] CreateTaskParam param)
         {
-            var response = await _taskService.CreateTask(task);
+            var response = await _taskService.CreateTask(param);
 
             return Ok(response);
         }

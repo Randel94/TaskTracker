@@ -1,5 +1,6 @@
 ﻿using TaskTracker.Models.Entities;
 using TaskTracker.Models.DTOs;
+using TaskTracker.Models.Params;
 
 namespace TaskTracker.Services.TaskServices
 {
@@ -20,7 +21,7 @@ namespace TaskTracker.Services.TaskServices
         /// Создание задачи.
         /// </summary>
         /// <returns></returns>
-        Task<TaskEntity> CreateTask(TaskEntity task);
+        Task<TaskDTO> CreateTask(CreateTaskParam param);
         /// <summary>
         /// Редактирование задачи.
         /// </summary>
