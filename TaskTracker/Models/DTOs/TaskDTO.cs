@@ -53,7 +53,7 @@ namespace TaskTracker.Models.DTOs
         {
             get
             {
-                return ChildTasks?.Sum(x => x.CompletedTimeChildSum ?? 0 + CompletedTime ?? 0);
+                return ChildTasks?.Sum(x => (x.CompletedTime ?? 0) + x.CompletedTimeChildSum);
             }
         }
         /// <summary>

@@ -25,7 +25,7 @@ namespace TaskTracker.Controllers
         }
 
         /// <summary>
-        /// Получение списка задач верхнего уровня.
+        /// Получение полного дерева задач.
         /// </summary>
         /// <returns></returns>
         [HttpGet("list")]

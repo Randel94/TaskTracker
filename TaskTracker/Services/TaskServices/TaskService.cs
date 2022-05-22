@@ -32,10 +32,9 @@ namespace TaskTracker.Services.TaskServices
                     .Include(x => x.ChildTasks)
                     .ToListAsync();
 
-                for (var i = 0; i < taskList.Count; i++)
-                {
-                    taskList[i] = await GetTaskRecursively(taskList[i].TaskId);
-                }
+                taskList.Where(x => x.ChildTasks.Any())
+                    .ToList()
+                    .ForEach(async y => y = await GetTaskRecursively(y.TaskId));
 
                 return _mapper.Map<List<TaskDTO>>(taskList);
             }
@@ -50,17 +49,14 @@ namespace TaskTracker.Services.TaskServices
         {
             try
             {
-                var task = await _dbContext.Task
-                    .Include(x => x.ParentTask)
-                    .Include(x => x.ChildTasks)
-                    .FirstOrDefaultAsync(x => x.TaskId == taskId);
+                var task = await GetTaskRecursively(taskId);
 
                 if (task == null)
                 {
                     throw new ObjectNotFoundException("Задача с таким идентификатором не найдена.");
                 }
 
-                return _mapper.Map<TaskDTO>(await GetTaskRecursively(task.TaskId));
+                return _mapper.Map<TaskDTO>(task);
             }
             catch (Exception ex)
             {
@@ -102,8 +98,7 @@ namespace TaskTracker.Services.TaskServices
         {
             try
             {
-                var oldTask = await _dbContext.Task
-                    .FindAsync(task.TaskId);
+                var oldTask = await GetTaskRecursively(task.TaskId);
 
                 if (oldTask == null)
                 {
@@ -113,11 +108,14 @@ namespace TaskTracker.Services.TaskServices
                 oldTask.Name = task.Name ?? oldTask.Name;
                 oldTask.Description = task.Description ?? oldTask.Description;
                 oldTask.Executor = task.Executor ?? oldTask.Executor;
-                oldTask.Status = task.Status ?? oldTask.Status;
                 oldTask.EstimatedTime = task.EstimatedTime ?? oldTask.EstimatedTime;
                 oldTask.CompletedTime = task.CompletedTime ?? oldTask.CompletedTime;
-                oldTask.DateFinish = task.DateFinish ?? oldTask.DateFinish;
                 oldTask.ParentId = task.ParentId ?? oldTask.ParentId;
+
+                if (task.Status != null)
+                {
+                    UpdateState(oldTask, task.Status.Value);
+                }
 
                 await _dbContext.SaveChangesAsync();
 
@@ -135,14 +133,20 @@ namespace TaskTracker.Services.TaskServices
             try
             {
                 var task = await _dbContext.Task
+                    .Include(x => x.ChildTasks)
                     .FirstOrDefaultAsync(x => x.TaskId == taskId);
 
                 if (task == null)
                 {
                     throw new ObjectNotFoundException("Задача не найдена.");
                 }
-
+                else if (task.ChildTasks.Any())
+                {
+                    throw new ForbiddenException("Нельзя удалить задачу, содержащую подзадачи");
+                }
+                
                 _dbContext.Task.Remove(task);
+                
                 await _dbContext.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -178,6 +182,7 @@ namespace TaskTracker.Services.TaskServices
             if (task?.ChildTasks is not null)
             {
                 var childTasks = task.ChildTasks.ToList();
+                
                 for (var i = 0; i < childTasks.Count; i++)
                 {
                     childTasks[i] = await GetTaskRecursively(childTasks[i].TaskId);
@@ -185,6 +190,26 @@ namespace TaskTracker.Services.TaskServices
             }
 
             return task;
+        }
+
+        private void UpdateState(TaskEntity task, TaskStatusEnum value)
+        {
+            if (value == TaskStatusEnum.Finished && task.Status == TaskStatusEnum.Assigned)
+            {
+                throw new ForbiddenException($"Нельзя завершить задачу из статуса \"Назначена\"");
+            }
+
+            if (task.ChildTasks.Any())
+            {
+                task.ChildTasks.ToList().ForEach(x => UpdateState(x, value));
+            }
+
+            task.Status = value;
+
+            if (value == TaskStatusEnum.Finished)
+            {
+                task.DateFinish = DateTime.UtcNow;
+            }
         }
     }
 }
