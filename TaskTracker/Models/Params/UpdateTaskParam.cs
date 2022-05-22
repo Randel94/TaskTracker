@@ -42,10 +42,6 @@ namespace TaskTracker.Models.Params
         /// </summary>
         public decimal? CompletedTime { get; set; }
         /// <summary>
-        /// Дата завершения задачи
-        /// </summary>
-        public DateTime? DateFinish { get; set; } = null;
-        /// <summary>
         /// Идентификатор родительской задачи
         /// </summary>
         [Range(1, int.MaxValue)]
