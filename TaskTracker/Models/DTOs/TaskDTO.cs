@@ -33,9 +33,29 @@ namespace TaskTracker.Models.DTOs
         /// </summary>
         public decimal EstimatedTime { get; set; }
         /// <summary>
+        /// Сумма плановой трудоемкости подзадач
+        /// </summary>
+        public decimal? EstimatedTimeChildSum
+        {
+            get
+            {
+                return ChildTasks?.Sum(x => x.EstimatedTimeChildSum + x.EstimatedTime);
+            }
+        }
+        /// <summary>
         /// Фактическое время выполнения
         /// </summary>
         public decimal? CompletedTime { get; set; }
+        /// <summary>
+        /// Сумма фактического времени выполнения подзадач
+        /// </summary>
+        public decimal? CompletedTimeChildSum
+        {
+            get
+            {
+                return ChildTasks?.Sum(x => x.CompletedTimeChildSum ?? 0 + CompletedTime ?? 0);
+            }
+        }
         /// <summary>
         /// Дата завершения задачи
         /// </summary>
@@ -47,6 +67,6 @@ namespace TaskTracker.Models.DTOs
         /// <summary>
         /// Список подзадач
         /// </summary>
-        public List<TaskDTO>? ChildTasks { get; set;}
+        public List<TaskDTO>? ChildTasks { get; set; }
     }
 }

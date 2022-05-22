@@ -22,16 +22,22 @@ namespace TaskTracker.Services.TaskServices
             _mapper = mapper;
         }
 
+        /// <inheritdoc/>
         public async Task<List<TaskDTO>> GetTaskList()
         {
             try
             {
                 var taskList = await _dbContext.Task
                     .Where(x => x.ParentId == null)
-                    .ProjectTo<TaskDTO>(_mapper.ConfigurationProvider)
+                    .Include(x => x.ChildTasks)
                     .ToListAsync();
 
-                return taskList;
+                for (var i = 0; i < taskList.Count; i++)
+                {
+                    taskList[i] = await GetTaskRecursively(taskList[i].TaskId);
+                }
+
+                return _mapper.Map<List<TaskDTO>>(taskList);
             }
             catch (Exception ex)
             {
@@ -39,6 +45,7 @@ namespace TaskTracker.Services.TaskServices
             }
         }
 
+        /// <inheritdoc/>
         public async Task<TaskDTO> GetTask(int taskId)
         {
             try
@@ -53,7 +60,7 @@ namespace TaskTracker.Services.TaskServices
                     throw new ObjectNotFoundException("Задача с таким идентификатором не найдена.");
                 }
 
-                return _mapper.Map<TaskDTO>(task);
+                return _mapper.Map<TaskDTO>(await GetTaskRecursively(task.TaskId));
             }
             catch (Exception ex)
             {
@@ -61,20 +68,26 @@ namespace TaskTracker.Services.TaskServices
             }
         }
 
+        /// <inheritdoc/>
         public async Task<TaskDTO> CreateTask(CreateTaskParam param)
         {
             try
             {
                 var task = _mapper.Map<TaskEntity>(param);
 
+                if (task.ParentId != null)
+                {
+                    var parentTask = await _dbContext.Task
+                        .FindAsync(task.ParentId);
+                    if (parentTask == null)
+                    {
+                        throw new ObjectNotFoundException("Не найдена родительская задача");
+                    }
+                }
+
                 await _dbContext.AddAsync(task);
 
                 await _dbContext.SaveChangesAsync();
-
-                if (task.ParentId != null)
-                {
-                    task.ParentTask = await _dbContext.Task.FindAsync(task.ParentId);
-                }
 
                 return _mapper.Map<TaskDTO>(task);
             }
@@ -84,6 +97,7 @@ namespace TaskTracker.Services.TaskServices
             }
         }
 
+        /// <inheritdoc/>
         public async Task<TaskDTO> UpdateTask(UpdateTaskParam task)
         {
             try
@@ -115,6 +129,7 @@ namespace TaskTracker.Services.TaskServices
             }
         }
 
+        /// <inheritdoc/>
         public async Task Delete(int taskId)
         {
             try
@@ -136,6 +151,7 @@ namespace TaskTracker.Services.TaskServices
             }
         }
 
+        /// <inheritdoc/>
         public async Task<Dictionary<int, string>> GetTaskStatusList()
         {
             try
@@ -150,6 +166,25 @@ namespace TaskTracker.Services.TaskServices
             {
                 throw new ServerException("Get Task Status List exception: " + ex.Message);
             }
+        }
+
+        private async Task<TaskEntity> GetTaskRecursively(int taskId)
+        {
+            var task = await _dbContext.Task
+                .Include(x => x.ParentTask)
+                .Include(x => x.ChildTasks)
+                .FirstOrDefaultAsync(x => x.TaskId == taskId);
+
+            if (task?.ChildTasks is not null)
+            {
+                var childTasks = task.ChildTasks.ToList();
+                for (var i = 0; i < childTasks.Count; i++)
+                {
+                    childTasks[i] = await GetTaskRecursively(childTasks[i].TaskId);
+                }
+            }
+
+            return task;
         }
     }
 }

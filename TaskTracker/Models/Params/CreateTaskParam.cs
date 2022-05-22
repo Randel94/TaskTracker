@@ -12,20 +12,24 @@ namespace TaskTracker.Models.Params
         /// Наименование задачи
         /// </summary>
         [Required(ErrorMessage = "Введите название задачи.")]
+        [MaxLength(100)]
         public string Name { get; set; }
         /// <summary>
         /// Описание задачи
         /// </summary>
         [Required(ErrorMessage = "Введите описание задачи.")]
+        [MaxLength(100)]
         public string Description { get; set; }
         /// <summary>
         /// Список исполнителей
         /// </summary>
         [Required(ErrorMessage = "Назначьте как минимум одного исполнителя.")]
+        [MaxLength(100)]
         public string Executor { get; set; }
         /// <summary>
         /// Статус задачи
         /// </summary>
+        [EnumDataType(typeof(TaskStatusEnum))]
         public TaskStatusEnum Status { get; set; }
         /// <summary>
         /// Плановая трудоемкость задачи
@@ -35,6 +39,7 @@ namespace TaskTracker.Models.Params
         /// <summary>
         /// Идентификатор родительской задачи
         /// </summary>
-        public int? PatentId { get; set; }
+        [Range(1, int.MaxValue)]
+        public int? ParentId { get; set; }
     }
 }

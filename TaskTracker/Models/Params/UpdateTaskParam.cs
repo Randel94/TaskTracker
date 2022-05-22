@@ -1,4 +1,5 @@
-﻿using TaskTracker.Models.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using TaskTracker.Models.Enums;
 
 namespace TaskTracker.Models.Params
 {
@@ -10,22 +11,27 @@ namespace TaskTracker.Models.Params
         /// <summary>
         /// Идентификатор задачи
         /// </summary>
+        [Required(ErrorMessage = "Укажите идентификатор редактируемой задачи")]
         public int TaskId { get; set; }
         /// <summary>
         /// Наименование задачи
         /// </summary>
+        [MaxLength(100)]
         public string? Name { get; set; }
         /// <summary>
         /// Описание задачи
         /// </summary>
+        [MaxLength(100)]
         public string? Description { get; set; }
         /// <summary>
         /// Список исполнителей
         /// </summary>
+        [MaxLength(100)]
         public string? Executor { get; set; }
         /// <summary>
         /// Статус задачи
         /// </summary>
+        [EnumDataType(typeof(TaskStatusEnum))]
         public TaskStatusEnum? Status { get; set; }
         /// <summary>
         /// Плановая трудоемкость задачи
@@ -42,6 +48,7 @@ namespace TaskTracker.Models.Params
         /// <summary>
         /// Идентификатор родительской задачи
         /// </summary>
+        [Range(1, int.MaxValue)]
         public int? ParentId { get; set; }
     }
 }

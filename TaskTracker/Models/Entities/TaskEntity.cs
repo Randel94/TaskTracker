@@ -18,22 +18,19 @@ namespace TaskTracker.Models.Entities
         /// <summary>
         /// Наименование задачи
         /// </summary>
-        [Required(ErrorMessage = "Введите название задачи.")]
         public string Name { get; set; }
         /// <summary>
         /// Описание задачи
         /// </summary>
-        [Required(ErrorMessage = "Введите описание задачи.")]
         public string Description { get; set; }
         /// <summary>
         /// Список исполнителей
         /// </summary>
-        [Required(ErrorMessage = "Назначьте как минимум одного исполнителя.")]
         public string Executor { get; set; }
         /// <summary>
         /// Дата регистрации задачи
         /// </summary>
-        public DateTime DateReg { get; set; } = DateTime.UtcNow;
+        public DateTime DateReg { get; set; } = DateTime.Now;
         /// <summary>
         /// Статус задачи
         /// </summary>
@@ -41,13 +38,10 @@ namespace TaskTracker.Models.Entities
         /// <summary>
         /// Плановая трудоемкость задачи
         /// </summary>
-        [Column(TypeName = "decimal(6,2)")]
-        [Required(ErrorMessage = "Введите плановое время выполнения задачи.")]
         public decimal EstimatedTime { get; set; }
         /// <summary>
         /// Фактическое время выполнения
         /// </summary>
-        [Column(TypeName = "decimal(6,2)")]
         public decimal? CompletedTime { get; set; }
         /// <summary>
         /// Дата завершения задачи
